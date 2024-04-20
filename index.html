@@ -1,47 +1,119 @@
 <!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messaging App</title>
-    <link rel="stylesheet" href="css/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messaging App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    #chat-window {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    input[type="text"], button {
+        margin: 10px 0;
+        padding: 10px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
-    <div class="container" id="container">
-        <div class="form-container sign-up-container">
-            <form id="signup-form">
-                <h1>Create Account</h1>
-                <input type="text" placeholder="Username" id="signup-username" required>
-                <input type="password" placeholder="Password" id="signup-password" required>
-                <button type="submit">Sign Up</button>
-            </form>
-        </div>
-        <div class="form-container sign-in-container">
-            <form id="login-form">
-                <h1>Sign In</h1>
-                <input type="text" placeholder="Username" id="login-username" required>
-                <input type="password" placeholder="Password" id="login-password" required>
-                <button type="submit">Sign In</button>
-            </form>
-        </div>
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
-                    <button class="ghost" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your personal details and start your journey with us</p>
-                    <button class="ghost" id="signUp">Sign Up</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="js/script.js"></script>
-    <script src="js/app.js"></script>
+<div class="container">
+    <h1>Messaging App</h1>
+    <label for="username">Your Username:</label>
+    <input type="text" id="username" placeholder="Enter your username">
+    <label for="recipient">Recipient's Username:</label>
+    <input type="text" id="recipient" placeholder="Enter recipient's username">
+    <div id="chat-window"></div>
+    <input type="text" id="message" placeholder="Type your message">
+    <button id="send-button">Send</button>
+</div>
+
+<script>
+    // Function to send a message
+    function sendMessage() {
+        var sender = document.getElementById('username').value;
+        var recipient = document.getElementById('recipient').value;
+        var message = document.getElementById('message').value;
+
+        if (sender && recipient && message) {
+            var chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML += '<p><strong>' + sender + ':</strong> ' + message + '</p>';
+            document.getElementById('message').value = '';
+
+            // Store message with sender and recipient in localStorage
+            var storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
+            storedMessages.push({ sender: sender, recipient: recipient, message: message });
+            localStorage.setItem('messages', JSON.stringify(storedMessages));
+        } else {
+            alert('Please enter both sender, recipient, and message');
+        }
+    }
+
+    // Function to display messages between two users
+    function displayMessages(sender, recipient) {
+        var storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
+        var chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML = '';
+
+        storedMessages.forEach(function(item) {
+            if ((item.sender === sender && item.recipient === recipient) ||
+                (item.sender === recipient && item.recipient === sender)) {
+                chatWindow.innerHTML += '<p><strong>' + item.sender + ':</strong> ' + item.message + '</p>';
+            }
+        });
+    }
+
+    // Function to handle sending messages to a friend
+    function sendMessageToFriend() {
+        var sender = document.getElementById('username').value;
+        var recipient = document.getElementById('recipient').value;
+        var message = document.getElementById('message').value;
+
+        if (sender && recipient && message) {
+            var chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML += '<p><strong>' + sender + ':</strong> ' + message + '</p>';
+            document.getElementById('message').value = '';
+
+            // Store message with sender and recipient in localStorage
+            var storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
+            storedMessages.push({ sender: sender, recipient: recipient, message: message });
+            localStorage.setItem('messages', JSON.stringify(storedMessages));
+        } else {
+            alert('Please enter both sender, recipient, and message');
+        }
+    }
+
+    // Display stored messages when the page loads
+    window.onload = function() {
+        var sender = document.getElementById('username').value;
+        var recipient = document.getElementById('recipient').value;
+        displayMessages(sender, recipient);
+    };
+
+    // Display stored messages when a new message is sent
+    document.getElementById('send-button').addEventListener('click', function() {
+        sendMessageToFriend();
+    });
+</script>
 </body>
 </html>
